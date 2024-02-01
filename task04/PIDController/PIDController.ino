@@ -1,4 +1,6 @@
 #include <PID_v1.h>
+//za for petlju
+#define NUMSAMPLES 5
 //analogni pin na arduinu
 byte thermistorPin = A0;
 //digitalni pin za kontrolu MOSFET-a
@@ -13,13 +15,30 @@ float logR2, R2, celsius;
 float c1 = 1.009249522e-03, c2 = 2.378405444e-04, c3 = 2.019202697e-07;
 
 // PID parameteri
-double setpoint = 25.0; // zeljena temperatura u stupnjevima Celzijusa
-double input, output;
+//triba vidit do koliko dozvolit?
+double setpoint = 80.0; // temperatura u stupnjevima Celzijusa do koje ce biti neki output jer je direct
+double input = 0, output;
 //triba sve ovo nastimati
-double Kp = 20.0, Ki = 0.2, Kd = 0.1; 
+double Kp = 3.1, Ki = 0.1, Kd = 0.1; 
 
 
 PID myPID(&input, &output, &setpoint, Kp, Ki, Kd, DIRECT);
+
+
+float readTemperatureSum(byte samples) {
+  float sum = 0;
+
+  for (int i = 0; i < samples; i++) {
+    int Vo = analogRead(thermistorPin);
+    R2 = R1 * (1023.0 / Vo - 1.0);
+    logR2 = log(R2);
+    celsius = (1.0 / (c1 + c2 * logR2 + c3 * logR2 * logR2 * logR2)) - 273.15;
+    sum += celsius;
+    delay(10);
+  }
+  return sum / samples;
+}
+
 
 void setup() {
   Serial.begin(9600);
@@ -30,12 +49,11 @@ void setup() {
 }
 
 void loop() {
-  Vo = analogRead(thermistorPin);
-  R2 = R1 * (1023.0 / Vo - 1.0); 
-  logR2 = log(R2);
-  celsius = (1.0 / (c1 + c2 * logR2 + c3 * logR2 * logR2 * logR2)) - 273.15;
+   float averageTemperature = readTemperatureSum(NUMSAMPLES);
 
-  input = celsius;
+  //sigurnije malo
+   input = averageTemperature;
+
 
   myPID.Compute();
 
@@ -49,5 +67,4 @@ void loop() {
   //Serial.println(R2);
   delay(1000);
 }
-
 
