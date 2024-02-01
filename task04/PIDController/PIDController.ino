@@ -21,15 +21,13 @@ double input, output;
 //triba sve ovo nastimati
 double Kp = 3.1, Ki = 0.1, Kd = 0.1; 
 
-
 PID myPID(&input, &output, &setpoint, Kp, Ki, Kd, DIRECT);
-
 
 float readTemperatureSum(byte samples) {
   float sum = 0;
 
   for (int i = 0; i < samples; i++) {
-    int Vo = analogRead(thermistorPin);
+    Vo = analogRead(thermistorPin);
     R2 = R1 * (1023.0 / Vo - 1.0);
     logR2 = log(R2);
     celsius = (1.0 / (c1 + c2 * logR2 + c3 * logR2 * logR2 * logR2)) - 273.15;
@@ -38,7 +36,6 @@ float readTemperatureSum(byte samples) {
   }
   return sum / samples;
 }
-
 
 void setup() {
   Serial.begin(9600);
@@ -54,7 +51,6 @@ void loop() {
   //sigurnije malo
    input = averageTemperature;
 
-
   myPID.Compute();
 
   Serial.print("Temparatura: ");
@@ -67,4 +63,3 @@ void loop() {
   //Serial.println(R2);
   delay(1000);
 }
-
