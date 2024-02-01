@@ -17,7 +17,7 @@ float c1 = 1.009249522e-03, c2 = 2.378405444e-04, c3 = 2.019202697e-07;
 // PID parameteri
 //triba vidit do koliko dozvolit?
 double setpoint = 80.0; // temperatura u stupnjevima Celzijusa do koje ce biti neki output jer je direct
-double input = 0, output;
+double input, output;
 //triba sve ovo nastimati
 double Kp = 3.1, Ki = 0.1, Kd = 0.1; 
 
