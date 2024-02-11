@@ -34,8 +34,8 @@ private:
   Device mosfets[NUM_MOSFETS];
   Device regulators[NUM_REGULATORS];
 public:
-  Controller(double Kp, double Ki, double Kd, double _setpoint, Device _mosfets[], Device _regulators[])
-    : setpoint(_setpoint), pid(&input, &output, &setpoint, Kp, Ki, Kd, DIRECT) {
+  Controller(double Kp, double Ki, double Kd, NTC _thermistor, double _setpoint, Device _mosfets[], Device _regulators[])
+    : thermistor(_thermistor), setpoint(_setpoint), pid(&input, &output, &setpoint, Kp, Ki, Kd, DIRECT) {
     memcpy(mosfets, _mosfets, sizeof(mosfets));
     memcpy(regulators, _regulators, sizeof(regulators));
   }
@@ -110,7 +110,7 @@ Device regulators[NUM_REGULATORS] = { { 2 }, { 3 }, { 4 }, { 5 }, { 6 } };
 double Kp = 2, Ki = 5, Kd = 1;
 double setpoint = 512.0;
 
-Controller controller(Kp, Ki, Kd, setpoint, mosfets, regulators);
+Controller controller(Kp, Ki, Kd, thermistor, setpoint, mosfets, regulators);
 
 void setup() {
   controller.setup();
